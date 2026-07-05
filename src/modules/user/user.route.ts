@@ -2,6 +2,6 @@ import { Router } from "express";
 import { authController } from "./user.controller";
 
 const router = Router();
-router.get('/', authController.getAllUser)
+router.post('/register', authController.getAllUser)
 
 export const authRoute = router;
