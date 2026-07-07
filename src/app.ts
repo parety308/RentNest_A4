@@ -7,6 +7,7 @@ import { authRoute } from './modules/user/user.route';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
 import { propertyRoute } from './modules/property/property.route';
 import { categoryRoute } from './modules/category/category.route';
+import { landlordRouter } from './modules/landlord/landlord.route';
 const app = express();
 
 //use middleware
@@ -20,6 +21,7 @@ app.use(cookieParser())
 app.use("/api/auth", authRoute);
 app.use("/api/properties", propertyRoute);
 app.use("/api/categories", categoryRoute);
+app.use("/api/landlord",landlordRouter)
 
 app.use(globalErrorHandler);
 function startServer() {

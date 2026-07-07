@@ -1,0 +1,41 @@
+import { NextFunction, Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
+import { landlordService } from "./landlord.service";
+import { sendResponse } from "../../utils/sendResponse";
+import HttpsStatus from "http-status-codes"
+const createProperty = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const landlordId = req.user?.id;
+    const result = await landlordService.createPropertyDB(req.body, landlordId as string);
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpsStatus.CREATED,
+        message: "Property Created Successfully",
+        data: result
+    })
+});
+
+const updateProperty = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const landlordId = req.user?.id;
+    const id = req.params.id;
+    const result = await landlordService.updatePropertyDB(id as string, req.body, landlordId as string);
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpsStatus.OK,
+        message: "Property Modified Successfully",
+        data: result
+    })
+});
+
+const deleteProperty = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+});
+
+const getAllRentalRequests = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+});
+const updateRentalRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+});
+
+
+export const landlordController = { createProperty, updateProperty, deleteProperty, getAllRentalRequests, updateRentalRequest }

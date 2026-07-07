@@ -4,17 +4,6 @@ import { propertyService } from "./property.service";
 import { sendResponse } from "../../utils/sendResponse";
 import HttpsStatus from "http-status-codes";
 
-const createProperty = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const landlordId = req.user?.id as string;
-    const payload = req.body;
-    const result = await propertyService.createPropertyIntoDB(payload, landlordId as string);
-    sendResponse(res, {
-        success: true,
-        statusCode: HttpsStatus.CREATED,
-        message: "Property created successfully",
-        data: result
-    })
-});
 
 const getAllProperties = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const queryParams = req.query;
@@ -28,8 +17,8 @@ const getAllProperties = catchAsync(async (req: Request, res: Response, next: Ne
 });
 
 const getPropertyById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-const propertyId = req.params.id;
-const result = await propertyService.getPropertyByIdFromDB(propertyId as string)||[];
+    const propertyId = req.params.id;
+    const result = await propertyService.getPropertyByIdFromDB(propertyId as string) || [];
     sendResponse(res, {
         success: true,
         statusCode: HttpsStatus.OK,
@@ -38,4 +27,4 @@ const result = await propertyService.getPropertyByIdFromDB(propertyId as string)
     })
 });
 
-export const propertyController = { createProperty, getAllProperties, getPropertyById };
+export const propertyController = { getAllProperties, getPropertyById };
