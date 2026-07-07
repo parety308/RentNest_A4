@@ -47,7 +47,22 @@ const updatePropertyDB = async (propertyId: string, propertyData: IUpdatePropert
 };
 
 const deletePropertyDB = async (propertyId: string, landlordId: string) => {
+    const property = await prisma.property.findFirst({
+        where: {
+            id: propertyId,
+            landlordId: landlordId
+        }
+    });
+    if (!property) {
+        throw new AppError(404, "Property not found or unauthorized");
+    }
+    const result = await prisma.property.delete({
+        where: {
+            id: propertyId,
+        }
+    });
 
+    return result;
 };
 
 const getAllRentalRequestsDB = async (landlordId: string) => {
