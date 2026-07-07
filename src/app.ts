@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 app.use("/api/auth", authRoute);
 app.use("/api/properties", propertyRoute);
-app.use("/api/category", categoryRoute);
+app.use("/api/categories", categoryRoute);
 
 app.use(globalErrorHandler);
 function startServer() {

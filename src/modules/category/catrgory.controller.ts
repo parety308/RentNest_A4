@@ -14,4 +14,14 @@ const createCategory = catchAsync(async (req: Request, res: Response, next: Next
     })
 });
 
-export const categoryController = { createCategory };
+const getAllCategories = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const result = await categoryService.getAllCategoriesFromDB();
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpsStatus.OK,
+        message: "Categories retrieved successfully",
+        data: result
+    })
+});
+
+export const categoryController = { createCategory, getAllCategories };
