@@ -1,11 +1,12 @@
 import { config } from "../../config";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
+import { jwtUtils } from "../../utils/jwtUtils";
 import { IRegisterPayload } from "./user.interface";
 import bcrypt from "bcrypt";
-import HttpsStatus from "http-status-codes"
-const registerUser = async (userData: IRegisterPayload) => {
-    const { name, email, password, role, isBanned } = userData;
+import HttpsStatus from "http-status-codes";
+const registerUserDB = async (userData: IRegisterPayload) => {
+    const { name, email, password, role } = userData;
 
     //check user is exist or not
     const isExist = await prisma.user.findUnique({
@@ -14,28 +15,87 @@ const registerUser = async (userData: IRegisterPayload) => {
     if (isExist) {
         throw new AppError(HttpsStatus.CONFLICT, "User already Exist");
     };
+    if (role === "ADMIN") {
+        throw new AppError(HttpsStatus.BAD_REQUEST, "Invalid role");
+    }
 
     //hashed password
     const hashPassword = await bcrypt.hash(password, config.bcrypt_salt_rounds);
-    await prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             name,
             email,
             password: hashPassword,
-            role,
-            isBanned
+            role
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            isBanned: true,
+            createdAt: true,
+            updatedAt: true,
         }
     });
-    const user = await prisma.user.findUnique({
-        where: { email },
-        omit: {
-            password: true
-        }
-    });
-    return user;
-}
 
+    return user;
+};
+
+const logInUserIntoDB = async (userData: { email: string; password: string }) => {
+    const { email, password } = userData;
+    const isExist = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!isExist) {
+        throw new AppError(HttpsStatus.NOT_FOUND, "User not Found")
+    };
+
+    if (isExist.isBanned) {
+        throw new AppError(
+            HttpsStatus.FORBIDDEN,
+            "Your account has been banned."
+        );
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, isExist.password);
+    if (!isMatchPassword) {
+        throw new AppError(
+            HttpsStatus.UNAUTHORIZED,
+            "Invalid email or password"
+        );
+    };
+
+    //create token
+    const jwtPayload = {
+        id: isExist.id,
+        name: isExist.name,
+        email: isExist.email,
+        role: isExist.role
+
+    };
+
+    const accessToken = await jwtUtils.createToken(jwtPayload, config.jwt_access_token_secret as string, config.jwt_access_expires_in as string);
+    const refreshToken = await jwtUtils.createToken(jwtPayload, config.jwt_refresh_secret as string, config.jwt_refresh_expires_in as string);
+    delete (isExist as Partial<typeof isExist>).password;
+
+    return { accessToken, refreshToken, user: isExist }
+};
+
+const getMeDB = async (email: string) => {
+    const user = await prisma.user.findUnique({
+        where: { email }
+    });
+    if (!user) {
+        throw new AppError(HttpsStatus.NOT_FOUND, "User not Found");
+    }
+     delete (user as Partial<typeof user>).password;
+    return user;
+};
 
 export const authService = {
-    registerUser
+    registerUserDB,
+    logInUserIntoDB,
+    getMeDB
 }
