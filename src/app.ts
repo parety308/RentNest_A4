@@ -5,7 +5,9 @@ import cors from "cors"
 import { config } from './config';
 import { authRoute } from './modules/user/user.route';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
-const app = express()
+import { propertyRoute } from './modules/property/property.route';
+import { categoryRoute } from './modules/category/category.route';
+const app = express();
 
 //use middleware
 app.use(cors({
@@ -15,8 +17,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
-app.use("/api/auth",authRoute);
-
+app.use("/api/auth", authRoute);
+app.use("/api/property", propertyRoute);
+app.use("/api/category", categoryRoute);
 
 app.use(globalErrorHandler);
 function startServer() {
