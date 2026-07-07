@@ -16,4 +16,25 @@ const createProperty = catchAsync(async (req: Request, res: Response, next: Next
     })
 });
 
-export const propertyController = { createProperty };
+const getAllProperties = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const result = await propertyService.getAllPropertiesFromDB();
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpsStatus.OK,
+        message: "Properties retrieved successfully",
+        data: result
+    })
+});
+
+const getPropertyById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const propertyId = req.params.id;
+const result = await propertyService.getPropertyByIdFromDB(propertyId as string)||[];
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpsStatus.OK,
+        message: "Property retrieved successfully",
+        data: result
+    })
+});
+
+export const propertyController = { createProperty, getAllProperties, getPropertyById };

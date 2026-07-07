@@ -25,5 +25,32 @@ const createPropertyIntoDB = async (payload: ICreateProperty, landlordId: string
     return result;
 }
 
+const getAllPropertiesFromDB = async () => {
+    const result = await prisma.property.findMany();
+    return result;
+};
 
-export const propertyService = { createPropertyIntoDB }
+const getPropertyByIdFromDB = async (propertyId: string) => {
+    const result = await prisma.property.findUnique({
+        where: {
+            id: propertyId
+        },
+        include: {
+            category: true,
+            landlord: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true
+                }
+            }
+        },
+        omit:{
+            categoryId:true,
+            landlordId:true
+        }
+    });
+    return result;
+}
+
+export const propertyService = { createPropertyIntoDB, getAllPropertiesFromDB, getPropertyByIdFromDB }

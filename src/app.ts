@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 app.use("/api/auth", authRoute);
-app.use("/api/property", propertyRoute);
+app.use("/api/properties", propertyRoute);
 app.use("/api/category", categoryRoute);
 
 app.use(globalErrorHandler);
