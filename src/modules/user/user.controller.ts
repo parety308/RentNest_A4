@@ -31,7 +31,7 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
         maxAge: 1000 * 60 * 60 * 24 * 7 //one day
     });
 
-    console.log("from controller : ", req.user);
+
     sendResponse(res, {
         success: true,
         statusCode: HttpsStatus.OK,
@@ -46,6 +46,7 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
 const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     const result = await authService.getMeDB(user?.email as string);
+        console.log("from controller : ", req.user);
     sendResponse(res, {
         success: true,
         statusCode: HttpsStatus.OK,
