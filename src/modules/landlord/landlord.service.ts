@@ -66,11 +66,31 @@ const deletePropertyDB = async (propertyId: string, landlordId: string) => {
 };
 
 const getAllRentalRequestsDB = async (landlordId: string) => {
+    const result = await prisma.rentalRequest.findMany({
+        where: {
+            property: {
+                landlordId
+            }
+        }
+    });
+
+    return result;
 
 };
+const updateRentalRequestDB = async (landlordId: string, rentalRequestId: string, payload: any) => {
+    const result = await prisma.rentalRequest.update({
+        where: {
+            id: rentalRequestId,
+            property: {
+                landlordId
+            }
+        },
+        data: {
+            ...payload
+        }
+    });
 
-const updateRentalRequestDB = async (landlordId: string, RentalRequestId: string) => {
-
+    return result;
 };
 
 
