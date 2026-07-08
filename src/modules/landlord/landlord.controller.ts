@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { landlordService } from "./landlord.service";
 import { sendResponse } from "../../utils/sendResponse";
-import HttpsStatus from "http-status-codes"
+import HttpsStatus from "http-status-codes";
+
 const createProperty = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const landlordId = req.user?.id;
     const result = await landlordService.createPropertyDB(req.body, landlordId as string);
@@ -48,6 +49,7 @@ const getAllRentalRequests = catchAsync(async (req: Request, res: Response, next
         data: result
     });
 });
+
 const updateRentalRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const landlordId = req.user?.id;
     const requestId = req.params.id;

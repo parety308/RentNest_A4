@@ -9,6 +9,7 @@ import { propertyRoute } from './modules/property/property.route';
 import { categoryRoute } from './modules/category/category.route';
 import { landlordRouter } from './modules/landlord/landlord.route';
 import { requestRoute } from './modules/rentalRequest/rental.route';
+import { adminRoute } from './modules/admin/admin.route';
 const app = express();
 
 //use middleware
@@ -23,7 +24,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/properties", propertyRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/landlord",landlordRouter);
-app.use("/api/rentals",requestRoute)
+app.use("/api/rentals",requestRoute);
+app.use("/api/admin",adminRoute)
 
 app.use(globalErrorHandler);
 function startServer() {
