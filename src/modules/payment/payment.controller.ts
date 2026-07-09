@@ -1,21 +1,81 @@
 import { NextFunction, Request, Response } from "express";
+import HttpStatus from "http-status-codes";
 import { catchAsync } from "../../utils/catchAsync";
 import { paymentService } from "./payment.service";
 import { sendResponse } from "../../utils/sendResponse";
+import AppError from "../../utils/AppError";
 
-const createPaymnet = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
- const result = await paymentService.createPaymentIntoDB(
-        req.body,
-        req.user.id
-    );
+const createPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+        const tenantId = req.user?.id;
+        const result = await paymentService.createPaymentIntoDB(req.body,tenantId as string);
 
-    sendResponse(res,{
-        success:true,
-        statusCode:200,
-        message:"Payment session created successfully",
-        data:result
-    });
-});
+        sendResponse(res, {
+            success: true,
+            statusCode: HttpStatus.CREATED,
+            message: "Payment session created successfully",
+            data: result,
+        });
+    }
+);
+const confirmPayment = catchAsync(
+    async (req: Request, res: Response) => {
 
+        const signature = req.headers["stripe-signature"]! as string;
 
-export const paymentController={createPaymnet}
+        if (!signature) {
+            throw new AppError(
+                HttpStatus.BAD_REQUEST,
+                "Missing Stripe Signature"
+            );
+        }
+
+        const result = await paymentService.confirmPaymentIntoDB(
+            req.body,
+            signature
+        );
+
+        sendResponse(res, {
+            success: true,
+            statusCode: HttpStatus.OK,
+            message: "Payment confirmed successfully",
+            data: result,
+        });
+    }
+);
+const getPaymentHistory = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const tenantId = req.user?.id;
+        const result = await paymentService.getPaymentHistoryDB(tenantId as string);
+
+        sendResponse(res, {
+            success: true,
+            statusCode: HttpStatus.OK,
+            message: "Payment history retrieved successfully",
+            data: result,
+        });
+    }
+);
+
+const getPaymentDetails = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const tenantId = req.user?.id;
+        const result = await paymentService.getPaymentDetailsDB(
+            req.params.id as string,
+            tenantId as string
+        );
+
+        sendResponse(res, {
+            success: true,
+            statusCode: HttpStatus.OK,
+            message: "Payment details retrieved successfully",
+            data: result,
+        });
+    }
+);
+
+export const paymentController = {
+    createPayment,
+    getPaymentHistory,
+    getPaymentDetails,
+    confirmPayment
+};

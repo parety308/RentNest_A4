@@ -1,10 +1,31 @@
 import { Router } from "express";
-import { paymentController } from "./payment.controller";
+import { Role } from "../../../generated/prisma/client";
 import auth from "../../middlewares/auth";
-import { Role } from "../../../generated/prisma/enums";
+import { paymentController } from "./payment.controller";
 
 const router = Router();
 
-router.post('/create', auth([Role.TENANT]), paymentController.createPaymnet);
+router.post(
+    "/create",
+    auth([Role.TENANT]),
+    paymentController.createPayment
+);
 
-export const paymentRouter = router;
+router.post(
+    "/confirm",
+    paymentController.confirmPayment
+);
+
+router.get(
+    "/",
+    auth([Role.TENANT]),
+    paymentController.getPaymentHistory
+);
+
+router.get(
+    "/:id",
+    auth([Role.TENANT]),
+    paymentController.getPaymentDetails
+);
+
+export const paymentRoute = router;
