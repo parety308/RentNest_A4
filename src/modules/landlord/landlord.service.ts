@@ -2,13 +2,19 @@ import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 import { ICreateProperty } from "../property/property.interface";
 import { IUpdateProperty } from "./landlord.interface";
-
+import HttpsStatus from "http-status-codes";
 const createPropertyDB = async (payload: ICreateProperty, landlordId: string) => {
-    if (!payload.categoryId) {
-        throw new AppError(400, "Category is required");
+    const category = await prisma.category.findUnique({
+        where: {
+            id: payload.categoryId
+        }
+    });
+
+    if (!category) {
+        throw new AppError(404, "Category not found");
     }
     if (!landlordId) {
-        throw new AppError(400, "Landlord is required");
+        throw new AppError(HttpsStatus.BAD_REQUEST, "Landlord is required");
     };
     const result = await prisma.property.create({
         data: {
@@ -16,6 +22,7 @@ const createPropertyDB = async (payload: ICreateProperty, landlordId: string) =>
             description: payload.description,
             location: payload.location,
             price: payload.price,
+            images: payload.images,
             bedrooms: payload.bedrooms,
             bathrooms: payload.bathrooms,
             amenities: payload.amenities,
@@ -34,13 +41,24 @@ const updatePropertyDB = async (propertyId: string, propertyData: IUpdatePropert
         }
     });
     if (!property) {
-        throw new AppError(404, "Property not found or unauthorized");
+        throw new AppError(HttpsStatus.NOT_FOUND, "Property not found or unauthorized");
     }
     const result = await prisma.property.update({
         where: {
             id: propertyId,
         },
-        data: propertyData
+        data: {
+            title: propertyData.title,
+            description: propertyData.description,
+            location: propertyData.location,
+            price: propertyData.price,
+            bedrooms: propertyData.bedrooms,
+            bathrooms: propertyData.bathrooms,
+            amenities: propertyData.amenities,
+            images: propertyData.images,
+            status: propertyData.status,
+            categoryId: propertyData.categoryId
+        }
     });
 
     return result;
@@ -54,7 +72,7 @@ const deletePropertyDB = async (propertyId: string, landlordId: string) => {
         }
     });
     if (!property) {
-        throw new AppError(404, "Property not found or unauthorized");
+        throw new AppError(HttpsStatus.NOT_FOUND, "Property not found or unauthorized");
     }
     const result = await prisma.property.delete({
         where: {
@@ -70,6 +88,12 @@ const getAllRentalRequestsDB = async (landlordId: string) => {
         where: {
             property: {
                 landlordId
+            },
+            include: {
+                property: true,
+                tenant: {
+                    omit: { password: true }
+                }
             }
         }
     });
@@ -78,19 +102,32 @@ const getAllRentalRequestsDB = async (landlordId: string) => {
 
 };
 const updateRentalRequestDB = async (landlordId: string, rentalRequestId: string, payload: any) => {
-    const result = await prisma.rentalRequest.update({
+    if (payload.status && !["APPROVED", "REJECTED"].includes(payload.status)) {
+        throw new AppError(HttpsStatus.BAD_REQUEST, "Invalid status value. Allowed values are 'APPROVED' or 'REJECTED'.");
+    }
+    const result = await prisma.rentalRequest.findUnique({
         where: {
             id: rentalRequestId,
             property: {
                 landlordId
             }
+        }
+    });
+    if (!result) {
+        throw new AppError(HttpsStatus.NOT_FOUND, "Rental request not found or unauthorized");
+    };
+
+
+    const updatedRequest = await prisma.rentalRequest.update({
+        where: {
+            id: rentalRequestId
         },
         data: {
             ...payload
         }
     });
 
-    return result;
+    return updatedRequest;
 };
 
 

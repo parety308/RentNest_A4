@@ -1,7 +1,7 @@
 import { Role } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
-
+import HttpsStatus from "http-status-codes";
 interface IUserQuery {
     page: number;
     limit: number;
@@ -40,12 +40,12 @@ const updateUserStatusDB = async (id: string, payload: { isBanned: boolean }) =>
         where: { id }
     });
     if (!user) {
-        throw new AppError(404, "User not found");
+        throw new AppError(HttpsStatus.NOT_FOUND, "User not found");
     };
 
     if (user.role === Role.ADMIN) {
         throw new AppError(
-            403,
+            HttpsStatus.FORBIDDEN,
             "Admin user cannot be banned"
         );
     }

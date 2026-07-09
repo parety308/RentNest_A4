@@ -3,8 +3,9 @@ export interface ICreateProperty {
   description: string;
   location: string;
   price: number;
+  images: string[];
   bedrooms?: number;
   bathrooms?: number;
-  amenities?: string;
+  amenities: string[];
   categoryId: string;
 }

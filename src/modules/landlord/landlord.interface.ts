@@ -1,9 +1,14 @@
-export interface IUpdateProperty{
-     title?: string;
+import { PropertyStatus } from "../../../generated/prisma/client";
+
+export interface IUpdateProperty {
+  title?: string;
   description?: string;
   location?: string;
   price?: number;
   bedrooms?: number;
   bathrooms?: number;
-  amenities?: string;
+  amenities: string[];
+  images: string[];
+  status?: PropertyStatus;
+  categoryId: string;
 }
