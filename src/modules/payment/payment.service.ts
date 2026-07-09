@@ -35,12 +35,12 @@ const createPaymentIntoDB = async (payload: any, tenantId: string) => {
 
     const existingPayment = await prisma.payment.findMany({
         where: {
-            rentalRequestId: rentalRequestId
+            rentalRequestId
         }
     });
 
 
-    if (existingPayment) {
+    if (existingPayment.length > 0) {
         throw new AppError(HttpStatus.CONFLICT, "Payment already exists for this rental request");
     };
 
@@ -81,13 +81,14 @@ const confirmPaymentIntoDB = async (
 ) => {
 
     try {
-
+        // console.log("Before constructEvent");
         const event = stripe.webhooks.constructEvent(
             payload,
             signature,
             config.stripe_webhook_secret
         );
-
+        // console.log("After constructEvent");
+        // console.log(event.type);
         if (event.type !== "checkout.session.completed") {
             return {
                 status: "IGNORED"

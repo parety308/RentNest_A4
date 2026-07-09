@@ -33,13 +33,22 @@ const createPropertyDB = async (payload: ICreateProperty, landlordId: string) =>
     return result;
 };
 
+
 const updatePropertyDB = async (propertyId: string, propertyData: IUpdateProperty, landlordId: string) => {
-    const property = await prisma.property.findFirst({
+    const property = await prisma.property.findUnique({
         where: {
-            id: propertyId,
-            landlordId: landlordId
+            id: propertyId
         }
     });
+    if (!property) {
+        throw new AppError(HttpsStatus.NOT_FOUND, "Property not found or unauthorized");
+    }
+    if (property.landlordId !== landlordId) {
+        throw new AppError(
+            HttpsStatus.NOT_FOUND,
+            "unauthorized to update this property"
+        );
+    }
     if (!property) {
         throw new AppError(HttpsStatus.NOT_FOUND, "Property not found or unauthorized");
     }
@@ -88,14 +97,15 @@ const getAllRentalRequestsDB = async (landlordId: string) => {
         where: {
             property: {
                 landlordId
-            },
-            include: {
-                property: true,
-                tenant: {
-                    omit: { password: true }
-                }
+            }
+        },
+        include: {
+            property: true,
+            tenant: {
+                omit: { password: true }
             }
         }
+
     });
 
     return result;

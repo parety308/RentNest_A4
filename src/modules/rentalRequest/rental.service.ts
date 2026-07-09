@@ -28,7 +28,7 @@ const getRequestByTenantIdDB = async (tenantId: string) => {
 };
 
 const getRequestByRequestIdDB = async (requestId: string) => {
-    console.log("from service : ",{requestId});
+    // console.log("from service : ",{requestId});
     const result = await prisma.rentalRequest.findUnique({
         where: { id: requestId },
         include: {

@@ -5,7 +5,7 @@ import { Role } from "../../../generated/prisma/client";
 
 
 const router = Router();
-router.post("/", auth([Role.ADMIN]), categoryController.createCategory)
-router.get("/", auth([Role.ADMIN]), categoryController.getAllCategories);
+router.post("/", auth([Role.ADMIN,Role.LANDLORD]), categoryController.createCategory);
+router.get("/", auth([Role.ADMIN,Role.LANDLORD]), categoryController.getAllCategories);
 
 export const categoryRoute = router;

@@ -15,9 +15,6 @@ const registerUserDB = async (userData: IRegisterPayload) => {
     if (isExist) {
         throw new AppError(HttpsStatus.CONFLICT, "User already Exist");
     };
-    if (role === "ADMIN") {
-        throw new AppError(HttpsStatus.BAD_REQUEST, "Invalid role");
-    }
 
     //hashed password
     const hashPassword = await bcrypt.hash(password, config.bcrypt_salt_rounds);

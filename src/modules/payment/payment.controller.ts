@@ -6,22 +6,22 @@ import { sendResponse } from "../../utils/sendResponse";
 import AppError from "../../utils/AppError";
 
 const createPayment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const tenantId = req.user?.id;
-        const result = await paymentService.createPaymentIntoDB(req.body,tenantId as string);
+    const tenantId = req.user?.id;
+    const result = await paymentService.createPaymentIntoDB(req.body, tenantId as string);
 
-        sendResponse(res, {
-            success: true,
-            statusCode: HttpStatus.CREATED,
-            message: "Payment session created successfully",
-            data: result,
-        });
-    }
+    sendResponse(res, {
+        success: true,
+        statusCode: HttpStatus.CREATED,
+        message: "Payment session created successfully",
+        data: result,
+    });
+}
 );
 const confirmPayment = catchAsync(
     async (req: Request, res: Response) => {
-
+        // console.log("webhook body:", req.body);
         const signature = req.headers["stripe-signature"]! as string;
-
+        // console.log("Stripe Signature:", signature);
         if (!signature) {
             throw new AppError(
                 HttpStatus.BAD_REQUEST,

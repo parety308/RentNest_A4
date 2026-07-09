@@ -1,15 +1,13 @@
 import { prisma } from "../../lib/prisma"
 import AppError from "../../utils/AppError";
-import { ICreateProperty } from "./property.interface";
-
 
 
 const getAllPropertiesFromDB = async (queryParams: {
     location?: string;
-    maxPrice?: number;
+    price?: number;
     type?: string;
 }) => {
-    const { location, maxPrice, type } = queryParams;
+    const { location, price, type } = queryParams;
 
     const result = await prisma.property.findMany({
         where: {
@@ -20,9 +18,9 @@ const getAllPropertiesFromDB = async (queryParams: {
                 },
             }),
 
-            ...(maxPrice && {
+            ...(price && {
                 price: {
-                    lte: Number(maxPrice),
+                    lte: Number(price),
                 },
             }),
 

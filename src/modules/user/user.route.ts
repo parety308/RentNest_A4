@@ -11,7 +11,7 @@ router.post("/login", authController.loginUser);
 router.delete("/", auth([Role.ADMIN]), async (req: Request, res: Response) => {
 
     const result = await prisma.user.deleteMany();
-    console.log("deleted users : ", result);
+    // console.log("deleted users : ", result);
 })
 
 router.get("/me", auth([Role.ADMIN, Role.TENANT, Role.LANDLORD]), authController.getMe);
