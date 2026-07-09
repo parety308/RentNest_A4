@@ -3,16 +3,24 @@ import { catchAsync } from "../../utils/catchAsync";
 import { adminService } from "./admin.service";
 import { sendResponse } from "../../utils/sendResponse";
 import HttpsStatus from "http-status-codes"
-const getAllUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await adminService.getAllUserDB();
-    sendResponse(res, {
-        success: true,
-        statusCode: HttpsStatus.OK,
-        message: "All User Retrieve Successfully",
-        data: result
-    })
-});
+import { Role } from "../../../generated/prisma/enums";
+const getAllUser = catchAsync(async (req: Request, res: Response) => {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const role = req.query.role as Role | undefined;
 
+  const result = await adminService.getAllUserDB({page,
+    limit,
+    role,
+  });
+
+  sendResponse(res, {
+    success: true,
+    statusCode: HttpsStatus.OK,
+    message: "All users retrieved successfully",
+    data: result,
+  });
+});
 const updateUserStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     const result = await adminService.updateUserStatusDB(id as string, req.body);

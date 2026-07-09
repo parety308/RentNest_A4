@@ -1,12 +1,40 @@
+import { Role } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 
-const getAllUserDB = async () => {
-    const result = await prisma.user.findMany({
-        omit: { password: true }
-    });
-    return result;
+interface IUserQuery {
+    page: number;
+    limit: number;
+    role?: Role;
+}
+
+const getAllUserDB = async ({ page, limit, role }: IUserQuery) => {
+    const where = role ? { role } : {};
+
+    const [users, total] = await Promise.all([
+        prisma.user.findMany({
+            where,
+            omit: {
+                password: true,
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        }),
+        prisma.user.count({ where }),
+    ]);
+
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+            totalPage: Math.ceil(total / limit),
+        },
+        data: users,
+    };
 };
+
+
 const updateUserStatusDB = async (id: string, payload: { isBanned: boolean }) => {
     const user = await prisma.user.findUnique({
         where: { id }
@@ -15,6 +43,12 @@ const updateUserStatusDB = async (id: string, payload: { isBanned: boolean }) =>
         throw new AppError(404, "User not found");
     };
 
+    if (user.role === Role.ADMIN) {
+        throw new AppError(
+            403,
+            "Admin user cannot be banned"
+        );
+    }
     const result = await prisma.user.update({
         where: {
             id
