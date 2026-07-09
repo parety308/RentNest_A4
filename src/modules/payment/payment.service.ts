@@ -33,9 +33,9 @@ const createPaymentIntoDB = async (payload: any, tenantId: string) => {
         );
     }
 
-    const existingPayment = await prisma.payment.findUnique({
+    const existingPayment = await prisma.payment.findMany({
         where: {
-            rentalRequestId
+            rentalRequestId: rentalRequestId
         }
     });
 
@@ -50,7 +50,7 @@ const createPaymentIntoDB = async (payload: any, tenantId: string) => {
             quantity: 1,
             price_data: {
                 currency: 'usd',
-                unit_amount: Math.round(rental.property.price * 100),
+                unit_amount: Math.round(Number(rental.property.price) * 100),
                 product_data: {
                     name: rental.property.title
                 }
@@ -65,15 +65,15 @@ const createPaymentIntoDB = async (payload: any, tenantId: string) => {
     await prisma.payment.create({
         data: {
             transactionId: session.id,
-            amount: rental.property.price,
+            amount: Number(rental.property.price),
             provider: PaymentProvider.STRIPE,
             status: PaymentStatus.PENDING,
-            rentalRequestId,
+            rentalRequestId: rentalRequestId,
             userId: tenantId,
             paidAt: null
         }
     })
-    return { checkoutUrl: session.url , transactionId: session.id};
+    return { checkoutUrl: session.url, transactionId: session.id };
 };
 const confirmPaymentIntoDB = async (
     payload: Buffer,

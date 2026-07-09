@@ -1,7 +1,7 @@
 model Review {
   id String @id @default(uuid())
 
-  rating  Int     @default(0)
+  rating  Int     @default(5)
   comment String?
 
   tenantId String
