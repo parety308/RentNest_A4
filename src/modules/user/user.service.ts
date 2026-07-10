@@ -1,4 +1,4 @@
-import { config } from "../../config";
+import {config} from "../../config/index";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../utils/AppError";
 import { jwtUtils } from "../../utils/jwtUtils";

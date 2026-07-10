@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { PaymentProvider, PaymentStatus, RequestStatus } from "../../../generated/prisma/client";
-import { config } from "../../config";
+import { config } from "../../config/index";
 import stripe from "../../config/stripe";
 import { prisma } from "../../lib/prisma"
 import AppError from "../../utils/AppError";

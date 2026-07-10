@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { jwtUtils } from "../utils/jwtUtils";
-import { config } from "../config";
+import { config } from "../config/index";
 import { sendResponse } from "../utils/sendResponse";
 import { catchAsync } from "../utils/catchAsync";
 

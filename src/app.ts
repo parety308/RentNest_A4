@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import HttpsStatus from "http-status-codes";
 import cors from "cors"
-import { config } from './config';
+import { config } from './config/index';
 import { authRoute } from './modules/user/user.route';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
 import { propertyRoute } from './modules/property/property.route';
