@@ -1,6 +1,9 @@
 import { Router } from "express";
+import { reviewController } from "./review.controller";
+import auth from "../../middlewares/auth";
+import { Role } from "../../../generated/prisma/client";
 
 const router = Router();
-router.post('/',)
+router.post('/',auth([Role.TENANT]), reviewController.createReview);
 
 export const reviewRouter = router;

@@ -11,6 +11,7 @@ import { landlordRouter } from './modules/landlord/landlord.route';
 import { requestRoute } from './modules/rentalRequest/rental.route';
 import { adminRoute } from './modules/admin/admin.route';
 import { paymentRoute } from './modules/payment/payment.route';
+import { reviewRouter } from './modules/review/review.route';
 const app = express();
 
 //use middleware
@@ -32,6 +33,7 @@ app.use("/api/landlord", landlordRouter);
 app.use("/api/rentals", requestRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/payments", paymentRoute);
+app.use("/api/reviews", reviewRouter);
 
 app.use(globalErrorHandler);
 function startServer() {
