@@ -49,7 +49,33 @@ export declare const landlordService: {
         landlordId: string;
         categoryId: string;
     }>;
-    getAllRentalRequestsDB: (landlordId: string) => Promise<{
+    getAllRentalRequestsDB: (landlordId: string) => Promise<({
+        property: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            location: string;
+            price: import("@prisma/client-runtime-utils").Decimal;
+            bedrooms: number | null;
+            bathrooms: number | null;
+            amenities: string[];
+            images: string[];
+            status: import("../../../generated/prisma/enums").PropertyStatus;
+            landlordId: string;
+            categoryId: string;
+        };
+        tenant: {
+            id: string;
+            name: string;
+            email: string;
+            role: import("../../../generated/prisma/enums").Role;
+            isBanned: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -59,7 +85,7 @@ export declare const landlordService: {
         message: string | null;
         startDate: Date | null;
         endDate: Date | null;
-    }[]>;
+    })[]>;
     updateRentalRequestDB: (landlordId: string, rentalRequestId: string, payload: any) => Promise<{
         id: string;
         createdAt: Date;

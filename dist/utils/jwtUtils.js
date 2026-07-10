@@ -1,0 +1,24 @@
+import jwt from "jsonwebtoken";
+const createToken = (payload, secret, expiresIn) => {
+    const token = jwt.sign(payload, secret, {
+        expiresIn: expiresIn
+    });
+    return token;
+};
+const verifyToken = (token, secret) => {
+    try {
+        const verifiedToken = jwt.verify(token, secret);
+        return {
+            success: true,
+            data: verifiedToken
+        };
+    }
+    catch (error) {
+        return {
+            success: false,
+            error: error.message
+        };
+    }
+};
+export const jwtUtils = { createToken, verifyToken };
+//# sourceMappingURL=jwtUtils.js.map

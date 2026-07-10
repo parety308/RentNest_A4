@@ -1,7 +1,7 @@
 export declare const propertyService: {
     getAllPropertiesFromDB: (queryParams: {
         location?: string;
-        maxPrice?: number;
+        price?: number;
         type?: string;
     }) => Promise<({
         landlord: {

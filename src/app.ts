@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import HttpsStatus from "http-status-codes";
 import cors from "cors"
-import { config } from './config/index';
+
 import { authRoute } from './modules/user/user.route';
 import { globalErrorHandler } from './middlewares/globalErrorHandler';
 import { propertyRoute } from './modules/property/property.route';
@@ -12,6 +12,7 @@ import { requestRoute } from './modules/rentalRequest/rental.route';
 import { adminRoute } from './modules/admin/admin.route';
 import { paymentRoute } from './modules/payment/payment.route';
 import { reviewRouter } from './modules/review/review.route';
+import { config } from './config/index';
 const app = express();
 
 //use middleware

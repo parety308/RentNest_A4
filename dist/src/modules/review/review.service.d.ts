@@ -1,5 +1,5 @@
 export declare const reviewService: {
-    createReviewDB: (payload: any) => Promise<{
+    createReviewDB: (payload: any, tenantId: string) => Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
