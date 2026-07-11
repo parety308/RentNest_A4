@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "outDir": "./dist",
+
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
+
     "target": "ES2023",
+
     "types": ["node"],
+
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
-  "exclude": ["node_modules", "dist"]
+
+  "include": [
+    "src",
+    "generated"
+  ]
 }
