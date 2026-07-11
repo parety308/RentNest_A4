@@ -4,6 +4,6 @@ import auth from "../../middlewares/auth";
 import { Role } from "../../../generated/prisma/client";
 
 const router = Router();
-router.post('/',auth([Role.TENANT]), reviewController.createReview);
+router.post('/',auth([Role.TENANT,Role.ADMIN]), reviewController.createReview);
 
 export const reviewRouter = router;
